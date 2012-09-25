@@ -65,6 +65,7 @@
                 pole,
                 signsSet,
                 menuToggle,
+                menuToggleBorder,
                 animating,
                 hoverRect,
                 maxRadius,
@@ -72,50 +73,67 @@
                 maxPaperHeight,
                 leftArrow = "M21.871,9.814 15.684,16.001 21.871,22.188 18.335,25.725 8.612,16.001 18.335,6.276z",
                 helperArrow,
-                helperText;
+                helperText,
+                showMenuSet;
 
                 return { 
 
                     createMenuToggle : function( min, max, menuHelper ) {
+
                         if( !paperMenu ) { 
                             paperMenu = new Raphael( 0, 0, $(window).width( ), $(window).height( ) ); 
                         };
-                        menuToggle =  paperMenu.circle( 10, 10, min );
+                        showMenuSet = paperMenu.set( );
+                        menuToggle =  paperMenu.circle( 0, 0, max );
+                        menuToggleBorder = paperMenu.circle( 0, 0, max - 7 ).attr({ "fill":"#fff" });
 
-                        hoverRect = paperMenu.rect( 5, 5, max, max );
-                        hoverRect.attr({ "stroke-width": "0" });
+                        hoverRect = paperMenu.rect( 5, 5, max * 2, max * 2 );
+                        hoverRect.attr({ x:"0",y:"0", "stroke-width": "0", "fill":"#000000", "opacity":"0" });
                         
-                        menuToggle.attr({ "fill":"#ffffff", "stroke-width":"0" });
-                        hoverRect.hover( function( ) {
-                            if( !animating ) {
-                                animating = true;
-                                helperArrow.hide( );
-                                helperText.hide( );
-                                menuToggle.animate({ transform: "s" + ( ( max / 2 ) / min ) + "," + ( ( max / 2 ) / min ) + ",5,5" }, 100,"linear", function( ) {  animating = false }); 
-                            }
-                        },
-                        function( ) {
-                                menuToggle.animate({ transform: "" }, 100);
-                                helperArrow.show( );
-                                helperText.show( );
-                        });
+                        menuToggle.attr({ "fill":"#000", "stroke-width":"0" });
 
+                        showMenuSet.push( menuToggle );
+                        showMenuSet.push( menuToggleBorder );
+                        //showMenuSet.push( hoverRect );
+                        showMenuSet.push( helperArrow );
+                        
                         hoverRect.click( function( ) {
 
                             $( paper.canvas ).fadeToggle( );
                         });
+
+                        hoverRect.hover( function( ) {
+                            if( !animating ) {
+                                animating = true;
+                                //helperText.hide( );
+                                helperArrow.animate({ transform: "s1.3r-135T5,5" }, 100 );
+                                menuToggleBorder.animate({ transform: "s1.3" }, 100, "linear" );
+                                menuToggle.animate({ transform: "s1.3" }, 100, "linear", function( ) { animating = false; });
+                                //menuToggle.animate({ transform: "s" + ( ( max / 2 ) / min ) + "," + ( ( max / 2 ) / min ) + ",5,5" }, 100,"linear", function( ) {  animating = false }); 
+                            }
+                        },
+                        function( ) {
+                                menuToggleBorder.animate({ transform: "" }, 100 );
+                                menuToggle.animate({ transform: "" }, 100);
+                                helperArrow.animate({ transform: "r-135t3,3,0,0" }, 100 );
+                                //helperText.show( );
+                        });
                         hoverRect.attr("cursor","hand");
 
 
-                        //helperArrow = paperMenu.path( leftArrow );
-                        helperArrow = paperMenu.path( "M1351,982c0,13.807-11.193,25-25,25H928c-13.807,0-25-11.193-25-25 l0,0c0-13.807,11.193-25,25-25h398C1339.807,957,1351,968.193,1351,982L1351,982z");
-                        helperArrow.transform( "s" + ( menuToggle.getBBox( ).height / helperArrow.getBBox( ).height ) + "," + ( menuToggle.getBBox( ).height / helperArrow.getBBox( ).height ) + ",0,0" + "t" +  ( menuToggle.getBBox( ).x2 + 20 ) + "," + menuToggle.getBBox( ).y );
-                        helperArrow.attr({ "stroke-width":"0","fill":"#fff" });
+                        helperArrow = paperMenu.path( leftArrow );
+
+                        hoverRect.toFront( );
+
+                        //helperArrow = paperMenu.path( "M1351,982c0,13.807-11.193,25-25,25H928c-13.807,0-25-11.193-25-25 l0,0c0-13.807,11.193-25,25-25h398C1339.807,957,1351,968.193,1351,982L1351,982z");
+                        //helperArrow.transform( "s" + ( menuToggle.getBBox( ).height / helperArrow.getBBox( ).height ) + "," + ( menuToggle.getBBox( ).height / helperArrow.getBBox( ).height ) + ",0,0" + "t" +  ( menuToggle.getBBox( ).x2 + 20 ) + "," + menuToggle.getBBox( ).y );
+                        helperArrow.transform( "r-135t3,3,0,0" );
+                        helperArrow.attr({ "stroke-width":"0","fill":"#000" });
 
 
-                        helperText = paperMenu.text( 0, 0, "click here for menu" );
-                        helperText.attr({ "fill":"#fff", "font-family":"Arial", "font-weight":"600", "font-size":"12" });
-                        helperText.attr({ x: ( helperArrow.getBBox( ).x2 + ( helperText.getBBox( ).width / 2 ) ) + 5, y: ( helperArrow.getBBox( ).y + ( helperArrow.getBBox( ).height / 2 ) ) });
+                        //helperText = paperMenu.text( 0, 0, "click here for menu" );
+                        //helperText.attr({ "fill":"#fff", "font-family":"Arial", "font-weight":"600", "font-size":"12" });
+                        //helperText.attr({ x: ( helperArrow.getBBox( ).x2 + ( helperText.getBBox( ).width / 2 ) ) + 5, y: ( helperArrow.getBBox( ).y + ( helperArrow.getBBox( ).height / 2 ) ) });
 
                         var targetY =  - helperArrow.getBBox( ).y; 
 
