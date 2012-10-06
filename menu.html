@@ -1,11 +1,21 @@
 <!DOCTYPE>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="reset.css">
         <script src="jquery.js"></script>
         <script src="raphael.js"></script>
-        <link rel="stylesheet" type="text/css" href="reset.css">
         <style>
+ 
+            .rounded {
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+                padding-right: 10px;
+                padding-left: 10px;
+            }
 
+
+Source: http://designmodo.com/rounded-corners/#ixzz285XXXgwD
             @font-face {
                 font-family: 'RobotoRegular';
                 src: url('Roboto-Regular-webfont.eot');
@@ -30,7 +40,7 @@
             }
 
             body {
-                background-color: #4D4D4D;
+                background-color: #000;
             }
         </style>
         <script>
@@ -42,27 +52,61 @@
                 settings = "M15.5,21.125c2.682,0,4.875-2.25,4.875-5V5.875c0-2.75-2.193-5-4.875-5s-4.875,2.25-4.875,5v10.25C10.625,18.875,12.818,21.125,15.5,21.125zM21.376,11v5.125c0,3.308-2.636,6-5.876,6s-5.875-2.691-5.875-6V11H6.626v5.125c0,4.443,3.194,8.132,7.372,8.861v2.139h-3.372v3h9.749v-3h-3.376v-2.139c4.181-0.727,7.375-4.418,7.375-8.861V11H21.376z";
 
                 Signs.init( );
+                Signs.display();
+                Signs.createArrow( "Review Snippets" , 1, "url(office.png)", 12, "http://www.google.co.uk", settings, false );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", cloud , true );
+                Signs.createArrow( "Review Snippets\nAgain" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, true);
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings , true );
+                Signs.createArrow( "Settings",  1, "#FFD400", 12, "http://www.youtube.com" );
+
+
+
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, false );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, false );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, false );
                 Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, false );
                 Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", cloud , true );
                 Signs.createArrow( "Review Snippets\nAgain" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, true);
                 Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings , true );
                 Signs.createArrow( "Settings",  1, "#FFD400", 12, "http://www.youtube.com" );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", cloud , true );
+                Signs.createArrow( "Review Snippets\nAgain" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, true);
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings , true );
+                Signs.createArrow( "Settings",  1, "#FFD400", 12, "http://www.youtube.com" );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", cloud , true );
+                Signs.createArrow( "Review Snippets\nAgain" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, true);
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings , true );
+                Signs.createArrow( "Settings",  1, "#FFD400", 12, "http://www.youtube.com" );
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", cloud , true );
+                Signs.createArrow( "Review Snippets\nAgain" , 1, "#94B92B", 12, "http://www.google.co.uk", settings, true);
+                Signs.createArrow( "Review Snippets" , 1, "#94B92B", 12, "http://www.google.co.uk", settings , true );
+                Signs.createArrow( "Settings",  1, "#FFD400", 12, "http://www.youtube.com" );
                 Signs.setHeight( );
-                Signs.createMenuToggle( 5, 40 );
+                //Signs.createMenuToggle( 5, 40 );
+                //Signs.createSearchMenu( );
             });
 
+            var colors = {
+                grey: "#4D4D4D",
+                darkGrey: "#383838"
+            }
+
+            function createBezier(xa, ya, xb, yb, xc, yc, xd, yd)
+            {
+
+                var path_parts = ["M"+xa, ya, "C"+xb, yb, xc, yc, xd, yd];
+                var path_string = path_parts.join(" ");
+
+                return path_string;
+
+            }
 
             var Signs = ( function( ) {
 
                 var lastRightY = 20,
                 lastLeftY = 30,
                 gapBetweenTiles = 20,
-                poleLeft,
-                poleWidth,
-                poleHeight,
-                poleRight,
                 paper,
-                pole,
                 signsSet,
                 menuToggle,
                 menuToggleBorder,
@@ -76,19 +120,199 @@
                 helperText,
                 showMenuSet;
 
+                var menu = {
+                    paper : null,
+                    outerPath: null,
+                    innerPath: null,
+                    searchBox: null,
+                    menuIcon: null
+                };
+
+                var post = {
+                    width: 12,
+                    x: 0,
+                    x2: 0,
+                    y: 0,
+                    y2: 0,
+                    fill:"#cccccc",
+                    strokeWidth: "0",
+                    el: null
+                };
+
                 return { 
 
+                    createMenu: function( ) {
+                        
+                        menu.paper = new Raphael( 0, 0, 250, 50 );
+                        var paper = menu.paper;
+
+                        var r = 20;
+                        var gap = 10;
+                        var shpWidth = 200;
+
+                        $( paper.canvas ).css( "position", "fixed" );
+
+                        var set = paper.set( );
+                        var m = paper.circle( ( gap + r ), ( r + gap ), r - 7 );
+                        var search = $("<input type='text'/>").appendTo( document.body ).css({ "margin-top": "0px", "margin-bottom": "0px", "padding-left": "5px", "padding-right": "5px", position: "fixed" });
+                        search.css({
+                            "-moz-border-radius": "10px",
+                            "border-radius": "10px",
+                            "-webkit-border-radius": "10px"
+                        });
+
+                        var arr = paper.path( leftArrow );
+                        arr.attr({ fill: colors.darkGrey, "stroke-width": "0px" });
+                        // transform moves x and y relative to themselves
+                        // x and y of circle refer to top left corner and not centre
+                        // to centre it in relation to circle half width and height and add difference to half width of circle
+                        arr.transform( "t" + ( ( m.getBBox( ).x - arr.getBBox( ).x ) + ( ( m.getBBox( ).width / 2 ) - ( arr.getBBox( ).width / 2 ) ) ) + " " + ( ( m.getBBox( ).y - arr.getBBox( ).y ) + ( ( m.getBBox( ).height / 2 ) - ( arr.getBBox( ).height / 2 ) ) ) );
+                        search.css({ "border-width": "0px", left: ( m.getBBox( ).x2 + 10 ), top: m.getBBox( ).y + ( ( m.getBBox( ).height - search.innerHeight( ) ) / 2 ),  width: shpWidth - 30 + "px", display: "none" });
+                        m.attr({ "fill": colors.grey, "stroke-width": "0" });
+                        function createSlidingShape( shpWidth ) {
+
+                            var xa = ( gap + r );
+                            var ya = ( gap + ( 2 * r ) );
+                            var xb = 3;
+                            var yb = ( gap + ( 2 * r ) );
+                            var xc = 3;
+                            var yc = gap ;
+                            var xd = ( gap + r );
+                            var yd = gap ;
+                            var x = createBezier( xa, ya, xb, yb, xc, yc, xd, yd );
+
+                            var xe = ( gap + r );
+                            var ye = ( gap + ( 2 * r ) );
+                            var xf = xe - ( ( yd - ye ) * 0.675 );
+                            var yf = ( gap + ( 2 * r ) );
+                            var xg = xe - ( ( yd - ye ) * 0.675 );
+                            var yg = gap ;
+                            var xh = ( gap + r );
+                            var yh = gap ;
+                            xe += shpWidth;
+                            xf += shpWidth;
+                            xg += shpWidth;
+                            xh += shpWidth;
+
+                            var y = createBezier( xe, ye, xf, yf, xg, yg, xh, yh );
+
+                            return x + "L" + xh + " " + yh + y +  "L" + xa + " " + ya;
+                        }
+                            var visible = false;
+                            var xpath = paper.path( createSlidingShape( 0 ) );
+                            xpath.toBack( );
+                            xpath.attr({ "fill": "" + colors.darkGrey, "stroke-width":"0" });
+                            //xpath.attr({ "fill": "url(paper_3.png)" } );
+                        set.push( m );
+                        set.push( arr );
+                        set.push( xpath );
+                        var animating = false;
+
+                        set.click( function( ) {
+                            if( !animating ) {
+                                animating = true;
+
+                                if( !visible ) {
+
+                                    xpath.animate({ path: createSlidingShape( shpWidth ) }, 200, "linear", function( ) { 
+                                        search.fadeToggle( ); 
+                                        arr.animate({ transform: arr.attr("transform") + "r180" }, 1000, "bounce", function( ) { animating = false; } );
+                                        search.focus();
+                                        $(paper.canvas).fadeIn( );
+                                    });
+                                    visible = true;
+
+                                    } else {
+
+                                    search.fadeToggle( 200, "linear", function( ) { 
+                                        arr.animate({ transform: arr.attr("transform") + "r180" }, 1000, "bounce", function( ) { animating = false; });
+                                        xpath.animate({ path: createSlidingShape( 0 ) }, 200, "linear" );
+                                        search.val("");
+                                        $(paper.canvas).fadeOut( );
+                                    });
+                                    visible = false;
+                                }
+                            }
+                         });
+                    },
+                    createSearchMenu: function( ) {
+                        var p = new Raphael( 0, 0, $(window).width( ), $(window).height( ) );
+                        var r = 20;
+                        var gap = 10;
+                        var shpWidth = 200;
+
+                        $( p.canvas ).css( "position", "fixed" );
+
+                        var set = p.set( );
+                        var m = p.circle( $(window).width( ) - ( gap + r ), $(window).height( ) - ( r + gap ), r - 7 );
+                        var search = $("<input type='text'/>").appendTo( document.body ).css( "height", "20px" );
+                        var extras = parseInt( search.css( "padding-left" ) ) + parseInt( search.css( "padding-right" ) ) + parseInt( search.css( "margin-left" ) ) + parseInt( search.css( "margin-right" ) );
+
+                        search.css({ "border-width": "0px", left: m.getBBox( ).x - ( shpWidth - 10 ), top: m.getBBox( ).y + ( ( m.getBBox( ).height - search.outerHeight( ) ) / 2 ), position: 'fixed', width: ( shpWidth - extras ) + "px", display: "none" });
+                        m.attr({ "fill": colors.grey, "stroke-width": "0" });
+                        function createSlidingShape( shpWidth ) {
+
+                            var xa = $(window).width( ) - ( gap + r );
+                            var ya = $(window).height( ) - ( gap + ( 2 * r ) );
+                            var xb = $(window).width( ) - 3;
+                            var yb = $(window).height( ) - ( gap + ( 2 * r ) );
+                            var xc = $(window).width( ) - 3;
+                            var yc = $(window).height( ) - gap ;
+                            var xd = $(window).width( ) - ( gap + r );
+                            var yd = $(window).height( ) - gap ;
+                            var x = createBezier( xa, ya, xb, yb, xc, yc, xd, yd );
+
+                            var xe = $(window).width( ) - ( gap + r );
+                            var ye = $(window).height( ) - ( gap + ( 2 * r ) );
+                            var xf = xe - ( ( yd - ye ) * 0.675 );
+                            var yf = $(window).height( ) - ( gap + ( 2 * r ) );
+                            var xg = xe - ( ( yd - ye ) * 0.675 );
+                            var yg = $(window).height( ) - gap ;
+                            var xh = $(window).width( ) - ( gap + r );
+                            var yh = $(window).height( ) - gap ;
+                            xe -= shpWidth;
+                            xf -= shpWidth;
+                            xg -= shpWidth;
+                            xh -= shpWidth;
+
+                            var y = createBezier( xe, ye, xf, yf, xg, yg, xh, yh );
+
+                            return x + "L" + xh + " " + yh + y +  "L" + xa + " " + ya;
+                        }
+                            var visible = false;
+                            var xpath = p.path( createSlidingShape( 0 ) );
+                            xpath.toBack( );
+                            xpath.attr({ "fill": "" + colors.darkGrey, "stroke-width":"0" });
+                        set.push( m );
+                        m.click( function( ) {
+                            if( !visible ) {
+
+                                xpath.animate({ path: createSlidingShape( shpWidth ) }, 200, "linear", function( ) { 
+                                    search.fadeToggle( ); 
+                                });
+                                visible = true;
+
+                            } else {
+
+                                search.fadeToggle( 200, "linear", function( ) { 
+                                    xpath.animate({ path: createSlidingShape( 0 ) }, 200, "linear" );
+                                });
+                                visible = false;
+                            }
+                     });
+                    },
                     createMenuToggle : function( min, max, menuHelper ) {
 
                         if( !paperMenu ) { 
                             paperMenu = new Raphael( 0, 0, $(window).width( ), $(window).height( ) ); 
                         };
+
                         showMenuSet = paperMenu.set( );
                         menuToggle =  paperMenu.circle( 0, 0, max );
                         menuToggleBorder = paperMenu.circle( 0, 0, max - 7 ).attr({ "fill":"#fff" });
 
                         hoverRect = paperMenu.rect( 5, 5, max * 2, max * 2 );
-                        hoverRect.attr({ x:"0",y:"0", "stroke-width": "0", "fill":"#000000", "opacity":"0" });
+                        hoverRect.attr({ "cursor": "pointer", x:"0",y:"0", "stroke-width": "0", "fill":"#000000", "opacity":"0" });
                         
                         menuToggle.attr({ "fill":"#000", "stroke-width":"0" });
 
@@ -152,28 +376,34 @@
                         //$(document.body).height( lastLeftY );
                         
                         paper.setSize( $(window).width(), ( $(window).height( ) > maxPaperHeight ? $( window ).height( ) : maxPaperHeight ) );
-                        var r =  ( $(window).height( ) > maxPaperHeight ? $( window ).height( ) : maxPaperHeight ) / pole.getBBox( ).height;
-                        // alert( "pole height: " + pole.getBBox( ).height );
-                        // alert( "window height: " + $( window ).height( ) );
+                        var r =  ( $(window).height( ) > maxPaperHeight ? $( window ).height( ) : maxPaperHeight ) / post.el.getBBox( ).height;
                         
-                        pole.transform("s1," + r + ",0,0" );
+                        post.el.transform("s1," + r + ",0,0" );
 
                     },
-                    init : function( ) { 
+                    init : function( args ) { 
 
                         paper = new Raphael( 0, 0, $(document).width(), $(document).height() );
-                        poleLeft = $(document).width()/2;
-                        poleWidth = 12;
-                        poleRight = poleLeft + poleWidth;
-                        poleHeight = $(document).height( );
-                        pole = paper.rect( poleLeft , 0, poleWidth, poleHeight );
-                        pole.attr({ 
-                            "fill":"#cccccc",
-                            "stroke-width": "0"
-                        });
-                        signsSet = paper.set( );
-                        //$( paper.canvas ).css( "background-color", "#ff0000" );
+                        
+                        // create and define properties
+                        post.width = ( args && args.postWidth ) || 12;
+                        post.x = ( $(document).width() / 2 ) - ( post.width / 2 );
+                        post.x2 = post.x + post.width;
+                        post.height = $(document).height( );
+                        //post.y = ??;
+                        //post.y2 = ??;
+
+                        // initialise left hand corner menu button
+                        Signs.createMenu( );
                     },
+
+                    display : function( ) {
+                        post.el = paper.rect( post.x , 10, post.width, post.height );
+                        post.el.attr({ fill: post.fill, "stroke-width": post.strokeWidth });
+                        signsSet = paper.set( );
+                    },
+
+                    //createSignPost : function( 
                     createArrow : function ( text, poleArrowGap, tileColor, tilePadding, url, icon, placeOnLeft ) {
 
                         var tempText, 
@@ -198,11 +428,13 @@
                         xText, 
                         yText,
                         xIcon,
-                        yIcon;
+                        yIcon,
+                        arrowSet;
 
                         tempText = paper.text( 0, 0, text );
-                        //tempText.attr({ "font-family":"PTSansRegular","font-size":"16" });
-                        tempText.attr({ "font-family":"Arial","font-size":"16", "font-weight":"600" });
+                        
+                        tempText.attr({ "font-family":"PTSansRegular","font-size":"16" });
+                        //tempText.attr({ "font-family":"Arial","font-size":"16", "font-weight":"600" });
                         tempBBox = tempText.getBBox(  );
                         arrGap = tilePadding || 10;
                         shpHeight = ( arrGap * 2 ) + tempBBox.height;
@@ -219,12 +451,56 @@
 
                         tempText.attr({ x:xText, y:yText, "fill": "#ffffff", "cursor": "hand" }).toFront( );
                         tempText.getBBox( ).width;
+                        tempArrow.placedOnLeft = placeOnLeft;
 
                         tileColor =  tileColor || "#000000" ;
 
                         tempArrow.attr({ "stroke-width":"2", "cursor": "hand", "fill": tileColor, "stroke-width":"0" });
                         tempArrow.click( function( ) { window.location.href = url; } );
                         tempText.click( function( ) { window.location.href = url; } );
+                        //var currentColor = tempArrow.attr("fill");
+
+                        arrowSet = paper.set( );
+                        arrowSet.push( iconPath );
+                        arrowSet.push( tempArrow );
+                        arrowSet.push( tempText );
+                        arrowSet.attr({ cursor: "pointer" })
+
+                        var animating = false;
+                        /*
+                        arrowSet.hover( function( ) 
+                        {
+                                // if a timeout has been set then the hover out function is about to run
+                                // cancel it and run on this element's hoverout as this element belongs to the set
+                                // if it didn't then it wouldn't have access to the timeout property
+                                if( tempArrow.timeout ) 
+                                { 
+                                    clearTimeout( tempArrow.timeout );
+                                    delete tempArrow.timeout;
+                                }
+                                else if( !tempArrow.animating )
+                                {
+                                    tempArrow.animating = true;
+                                    tempText.animate({ transform: "s1.1,1" }, 100 );
+                                    if( tempArrow.placedOnLeft ) {
+                                        tempArrow.animate({ transform: "s1.1,1," + tempArrow.getBBox( ).x2 + "," + tempArrow.getBBox( ).y2 }, 100 );
+                                    } else { 
+                                        tempArrow.animate({ transform: "s1.1,1," + tempArrow.getBBox( ).x + "," + tempArrow.getBBox( ).y }, 100 );
+                                    }
+                                    tempArrow.fade = true;
+                                }
+                        },
+                        function( ) {
+                            if( tempArrow.animating ) {
+
+                            tempArrow.timeout = setTimeout( function( ) {
+                                tempArrow.stop()
+                                tempArrow.animate({ transform: "" }, 200 );
+                                    tempArrow.animating = false;
+                                    }, 200, "linear" );
+                            }
+                        });
+                        */
 
                         if ( icon ) { 
                             iconPath.toFront( );
@@ -238,7 +514,7 @@
 
                         function setLeftPoints( ) {
 
-                            xPoint1 = poleLeft - poleArrowGap;
+                            xPoint1 = post.x - poleArrowGap;
                             yPoint1 = lastLeftY;
                             xPoint2 = xPoint1 - shpWidth;
 
@@ -269,7 +545,7 @@
 
                         function setRightPoints( ) {
 
-                            xPoint1 = poleLeft + poleWidth + poleArrowGap;
+                            xPoint1 = post.x + post.width + poleArrowGap;
                             yPoint1 = lastRightY;
                             xPoint2 = shpWidth + xPoint1;
                             yPoint2 = yPoint1;
@@ -292,6 +568,7 @@
                             + "L" + xPoint5 + " " + yPoint5
                             + "Z"
                             ); 
+
 
                             lastRightY = lastRightY + shpHeight + gapBetweenTiles;
                             if( lastRightY > lastLeftY ) { maxPaperHeight = lastRightY; };
